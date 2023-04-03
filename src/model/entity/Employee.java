@@ -16,6 +16,19 @@ public class Employee {
 
     private String jobTitle;
 
+    public Employee() {
+    }
+
+    public Employee(Integer id, String firstName, String lastName, String extension, String email, String officeCode, String jobTitle) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.extension = extension;
+        this.email = email;
+        this.officeCode = officeCode;
+        this.jobTitle = jobTitle;
+    }
+
     public Integer getId() {
         return id;
     }

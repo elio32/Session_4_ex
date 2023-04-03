@@ -24,7 +24,7 @@ public final class JdbcConnection {
                     db.getUrl(),
                     db.getUser(),
                     db.getPassword());
-        } catch (IOException | SQLException e) {
+        } catch (IOException | SQLException | NullPointerException e) {
             System.err.println(e.getMessage());
         }
         return connection;

@@ -52,7 +52,15 @@ public class EmployeeRepository extends BaseRepository<Employee, Integer> {
     @Override
     public Boolean exists(Integer id) {
         // TODO: Implement a method which checks if an employee with the given id exists in the employees table
-        return null;
+        try (Connection connection = JdbcConnection.connect();
+             PreparedStatement statement = connection.prepareStatement(Queries.FIND_EMPLOYEE_BY_ID)) {
+            statement.setInt(1, id);
+            ResultSet result = statement.executeQuery();
+            return result.next();
+        } catch (SQLException e) {
+            System.err.println("Error");
+        }
+        return false;
     }
 
     @Override
@@ -60,18 +68,58 @@ public class EmployeeRepository extends BaseRepository<Employee, Integer> {
         /*
          * TODO: Implement a method which adds an employee to the employees table
          *  If the employee exists then the method should instead update the employee
-         *
          */
-        return null;
+        try (Connection connection = JdbcConnection.connect()) {
+            if (exists(employee.getId())) {
+                PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID);
+
+                statement.setInt(1, employee.getId());
+                statement.setString(2, employee.getLastName());
+                statement.setString(3, employee.getFirstName());
+                statement.setString(4, employee.getExtension());
+                statement.setString(5, employee.getEmail());
+                statement.setString(6, employee.getOfficeCode());
+                statement.setString(7, employee.getLastName());
+                statement.setString(8, employee.getJobTitle());
+                return statement.executeUpdate() > 0;
+            } else {
+                PreparedStatement statement = connection.prepareStatement(Queries.INSERT_EMPLOYEE);
+                statement.setInt(1, employee.getId());
+                statement.setString(2,employee.getLastName());
+                statement.setString(3, employee.getFirstName());
+                statement.setString(4, employee.getExtension());
+                statement.setString(5, employee.getEmail());
+                statement.setString(6, employee.getOfficeCode());
+                statement.setString(7, employee.getLastName());
+                statement.setString(8, employee.getJobTitle());
+                return statement.executeUpdate() > 0;
+            }
+        } catch (SQLException  e) {
+            System.err.println("Error");
+        }
+        return false;
     }
 
     @Override
     public Integer update(Employee employee) {
         /*
-          * TODO: Implement a method which updates an employee with the given Employee instance
-          *  The method should then return the number of updated records
+         * TODO: Implement a method which updates an employee with the given Employee instance
+         *  The method should then return the number of updated records
          */
-        return null;
+        try (Connection connection = JdbcConnection.connect();
+             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID)) {
+            statement.setInt(1, employee.getId());
+            statement.setString(2, employee.getLastName());
+            statement.setString(3, employee.getFirstName());
+            statement.setString(4, employee.getExtension());
+            statement.setString(5, employee.getEmail());
+            statement.setString(6, employee.getOfficeCode());
+            statement.setString(7, employee.getLastName());
+            statement.setString(8, employee.getJobTitle());
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error");
+        }
+        return 0;
     }
-
 }
