@@ -96,7 +96,7 @@ public class OrdersRepository extends BaseRepository<Orders,Integer>{
          *  The method should then return the number of updated records
          */
         try (Connection connection = JdbcConnection.connect();
-             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_ORDER_BY_ID)) {
             statement.setInt(1, orders.getId());
             statement.setString(2, orders.getStatus());
             statement.setString(3, orders.getComments());

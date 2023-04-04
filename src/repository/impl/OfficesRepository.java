@@ -101,7 +101,7 @@ public class OfficesRepository extends BaseRepository<Offices, String> {
          *  The method should then return the number of updated records
          */
         try (Connection connection = JdbcConnection.connect();
-             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_OFFICE_BY_OFFICECODE)) {
             statement.setString(1, offices.getOfficeCode());
             statement.setString(2, offices.getCity());
             statement.setString(3, offices.getPhoneNumber());

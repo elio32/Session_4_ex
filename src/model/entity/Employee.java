@@ -15,11 +15,12 @@ public class Employee {
     private String officeCode;
 
     private String jobTitle;
+    private Integer reportsTo;
 
     public Employee() {
     }
 
-    public Employee(Integer id, String firstName, String lastName, String extension, String email, String officeCode, String jobTitle) {
+    public Employee(Integer id, String firstName, String lastName, String extension, String email, String officeCode, String jobTitle, Integer reportsTo) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -27,6 +28,7 @@ public class Employee {
         this.email = email;
         this.officeCode = officeCode;
         this.jobTitle = jobTitle;
+        this.reportsTo = reportsTo;
     }
 
     public Integer getId() {
@@ -83,5 +85,13 @@ public class Employee {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public Integer getReportsTo() {
+        return reportsTo;
+    }
+
+    public void setReportsTo(Integer reportsTo) {
+        this.reportsTo = reportsTo;
     }
 }

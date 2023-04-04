@@ -62,42 +62,60 @@ public class EmployeeRepository extends BaseRepository<Employee, Integer> {
         }
         return false;
     }
+    public Integer getMaxId() {
+        Integer maxId = 2001;
+        try (Connection connection = JdbcConnection.connect();
+             PreparedStatement statement = connection.prepareStatement(Queries.ID_MAX)) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                maxId = result.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("ErrorMaxID");
+        }
+        return maxId;
+    }
 
     @Override
     public Boolean save(Employee employee) {
         /*
          * TODO: Implement a method which adds an employee to the employees table
          *  If the employee exists then the method should instead update the employee
+         *
          */
-        try (Connection connection = JdbcConnection.connect()) {
-            if (exists(employee.getId())) {
-                PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID);
-
-                statement.setInt(1, employee.getId());
+        if (this.exists(employee.getId())) {
+            update(employee);
+            return true;
+        } else {
+            int rows = 0;
+            try (Connection connection = JdbcConnection.connect();
+                 PreparedStatement statement = connection.prepareStatement(Queries.ADD_EMPLOYEE)) {
+                if (employee.getId() > this.getMaxId())
+                    statement.setInt(1, employee.getId());
+                else
+                    statement.setInt(1, this.getMaxId() + 1);
                 statement.setString(2, employee.getLastName());
                 statement.setString(3, employee.getFirstName());
                 statement.setString(4, employee.getExtension());
                 statement.setString(5, employee.getEmail());
                 statement.setString(6, employee.getOfficeCode());
-                statement.setString(7, employee.getLastName());
+                if (this.exists(employee.getReportsTo())) {
+                    statement.setInt(7, employee.getReportsTo());
+                } else {
+                    System.out.println("Couldnt add employee. Invalid manager");
+                    return false;
+                }
                 statement.setString(8, employee.getJobTitle());
-                return statement.executeUpdate() > 0;
-            } else {
-                PreparedStatement statement = connection.prepareStatement(Queries.INSERT_EMPLOYEE);
-                statement.setInt(1, employee.getId());
-                statement.setString(2,employee.getLastName());
-                statement.setString(3, employee.getFirstName());
-                statement.setString(4, employee.getExtension());
-                statement.setString(5, employee.getEmail());
-                statement.setString(6, employee.getOfficeCode());
-                statement.setString(7, employee.getLastName());
-                statement.setString(8, employee.getJobTitle());
-                return statement.executeUpdate() > 0;
+                rows = statement.executeUpdate();
+                if (rows == 1) {
+                    System.out.println("New employee added to the employees table");
+                }
+                System.out.println("Rows updated: " + rows);
+            } catch (SQLException e) {
+                System.err.println("ErrorAdd");
             }
-        } catch (SQLException  e) {
-            System.err.println("Error");
+            return rows >= 1;
         }
-        return false;
     }
 
     @Override
@@ -106,20 +124,36 @@ public class EmployeeRepository extends BaseRepository<Employee, Integer> {
          * TODO: Implement a method which updates an employee with the given Employee instance
          *  The method should then return the number of updated records
          */
-        try (Connection connection = JdbcConnection.connect();
-             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID)) {
-            statement.setInt(1, employee.getId());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getFirstName());
-            statement.setString(4, employee.getExtension());
-            statement.setString(5, employee.getEmail());
-            statement.setString(6, employee.getOfficeCode());
-            statement.setString(7, employee.getLastName());
-            statement.setString(8, employee.getJobTitle());
-            return statement.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Error");
+        Integer rows = 0;
+        if (this.exists(employee.getId())) {
+            try (Connection connection = JdbcConnection.connect();
+                 PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE)) {
+                statement.setString(1, employee.getLastName());
+                statement.setString(2, employee.getFirstName());
+                statement.setString(3, employee.getExtension());
+                statement.setString(4, employee.getEmail());
+                statement.setString(5, employee.getOfficeCode());
+                statement.setString(6, employee.getJobTitle());
+                if (this.exists(employee.getReportsTo())) {
+                    statement.setInt(7, employee.getReportsTo());
+                } else {
+                    System.out.println("Couldn't update employee. Invalid manager");
+                    return null;
+                }
+                statement.setInt(8, employee.getId());
+                rows = statement.executeUpdate();
+                if (rows == 1) {
+                    System.out.println("Employee with ID: " + employee.getId() + " is updated");
+                }
+                System.out.println("Rows updated: " + rows);
+            } catch (SQLException e) {
+                System.err.println("ErrorUpdate");
+            }
+        } else {
+            System.out.println("Couldnt update. Employee not found\nRows affected: " + rows);
         }
-        return 0;
+        return rows;
     }
+
 }
+

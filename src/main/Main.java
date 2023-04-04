@@ -31,12 +31,12 @@ public class Main {
         System.out.println("Employee with ID 1286 exists: " + exists);
 
         // Save method
-        Employee newEmployee = new Employee(2002, "Elio", "Sinaj", "x55225", "elsin@yahoo.com", "tirana", "Manager");
+        Employee newEmployee = new Employee(2002, "Elio", "Sinaj", "x55225", "elsin@yahoo.com", "tirana", "Manager",4);
         boolean saved = employeeRepository.save(newEmployee);
         System.out.println("New employee saved: " + saved);
 
         // update method
-        Employee updatedEmployee = new Employee(2002, "Filan", "Ff", "x125", "ff@gmail.com", "tirana", "Software DEV");
+        Employee updatedEmployee = new Employee(2002, "Filan", "Ff", "x125", "ff@gmail.com", "tirana", "Software DEV",1);
         int updatedCount = employeeRepository.update(updatedEmployee);
         System.out.println("Number of updated employees: " + updatedCount);
 
@@ -61,12 +61,12 @@ public class Main {
         System.out.println("Customer with ID 1286 exists: " + exists1);
 
         // Save method
-        Customers newCustomer = new Customers(2002, "Xhek", "Gola", "x51", "xhek@yahoo.com", "tirana", "social media manager");
+        Customers newCustomer = new Customers(2002, "Xhek", "Gola", "x51", "xhek@yahoo.com", "tirana", "social media manager",14.2);
         boolean saved1 = customerRepository.save(newCustomer);
         System.out.println("New Customer saved: " + saved1);
 
         // update method
-        Customers updatedCustomer = new Customers(2002, "Beni", "Bb", "x12", "Bb@gmail.com", "tirana", "Artist");
+        Customers updatedCustomer = new Customers(2002, "Beni", "Bb", "x12", "Bb@gmail.com", "tirana", "Artist",22.2);
         int updatedCount1 = customerRepository.update(updatedCustomer);
         System.out.println("Number of updated customers: " + updatedCount1);
 

@@ -9,11 +9,12 @@ public class Customers {
     private String address;
     private String city;
     private String postalCode;
+    private Double creditLimit;
 
     public Customers() {
     }
 
-    public Customers(Integer id, String firstName, String lastName, String phoneNumber, String address, String city, String postalCode) {
+    public Customers(Integer id, String firstName, String lastName, String phoneNumber, String address, String city, String postalCode,Double creditLimit) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -21,6 +22,7 @@ public class Customers {
         this.address = address;
         this.city = city;
         this.postalCode = postalCode;
+        this.creditLimit = creditLimit;
     }
 
     public Integer getId() {
@@ -76,5 +78,12 @@ public class Customers {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public Double getCreditLimit() {
+        return creditLimit;
+    }
+    public void setCreditLimit(Double creditLimit) {
+        this.creditLimit = creditLimit;
     }
 }

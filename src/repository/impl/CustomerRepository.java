@@ -64,60 +64,93 @@ public class CustomerRepository extends BaseRepository<Customers, Integer> {
     }
 
     @Override
-    public Boolean save(Customers customers) {
-        /*
-         * TODO: Implement a method which adds an employee to the employees table
-         *  If the employee exists then the method should instead update the employee
-         */
-        try (Connection connection = JdbcConnection.connect()) {
-            if (exists(customers.getId())) {
-                PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_CUSTOMER_BY_ID);
+    public Boolean save(Customers customer) {
+        if (this.exists(customer.getId())) {
+            update(customer);
+            return true;
+        } else {
+            int rows = 0;
+            try (Connection connection = JdbcConnection.connect();
+                 PreparedStatement statement = connection.prepareStatement(Queries.ADD_CUSTOMER)) {
+                if (customer.getId() > this.getMaxId())
+                    statement.setInt(1, customer.getId());
+                else
+                    statement.setInt(1, this.getMaxId() + 1);
+                statement.setString(3, customer.getFirstName());
+                statement.setString(4, customer.getLastName());
+                statement.setString(5, customer.getPhoneNumber());
+                statement.setString(6, customer.getAddress());
+                statement.setString(8, customer.getCity());
+                statement.setString(10, customer.getPostalCode());
+                EmployeeRepository employees = new EmployeeRepository();
 
-                statement.setInt(1, customers.getId());
-                statement.setString(2, customers.getFirstName());
-                statement.setString(3, customers.getLastName());
-                statement.setString(4, customers.getPhoneNumber());
-                statement.setString(5, customers.getAddress());
-                statement.setString(6, customers.getAddress());
-                statement.setString(7, customers.getPostalCode());
-                return statement.executeUpdate() > 0;
-            } else {
-                PreparedStatement statement = connection.prepareStatement(Queries.INSERT_CUSTOMER);
-                statement.setInt(1, customers.getId());
-                statement.setString(2, customers.getFirstName());
-                statement.setString(3, customers.getLastName());
-                statement.setString(4, customers.getPhoneNumber());
-                statement.setString(5, customers.getAddress());
-                statement.setString(6, customers.getAddress());
-                statement.setString(7, customers.getPostalCode());
-                return statement.executeUpdate() > 0;
+                if (employees.exists(customer.getId())) {
+                    statement.setInt(12, customer.getId());
+                } else {
+                    System.out.println("Couldn't add customer. Invalid employee");
+                    return null;
+                }
+                statement.setDouble(13, customer.getCreditLimit());
+                rows = statement.executeUpdate();
+                if (rows == 1) {
+                    System.out.println("New customer added to the customers table");
+                }
+                System.out.println("Rows updated: " + rows);
+            } catch (SQLException e) {
+                System.err.println("ErrorAdd");
             }
-        } catch (SQLException e) {
-            System.err.println("Error");
+            return rows >= 1;
         }
-        return false;
     }
 
     @Override
-    public Integer update(Customers customers) {
-        /*
-         * TODO: Implement a method which updates an employee with the given Employee instance
-         *  The method should then return the number of updated records
-         */
-        try (Connection connection = JdbcConnection.connect();
-             PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_EMPLOYEE_BY_ID)) {
-            statement.setInt(1, customers.getId());
-            statement.setString(2, customers.getFirstName());
-            statement.setString(3, customers.getLastName());
-            statement.setString(4, customers.getPhoneNumber());
-            statement.setString(5, customers.getAddress());
-            statement.setString(6, customers.getCity());
-            statement.setString(7, customers.getPostalCode());
-            return statement.executeUpdate();
-        } catch (SQLException | NullPointerException e) {
-            System.err.println("Error");
+    public Integer update(Customers customer) {
+        Integer rows = 0;
+        if (this.exists(customer.getId())) {
+            try (Connection connection = JdbcConnection.connect();
+                 PreparedStatement statement = connection.prepareStatement(Queries.UPDATE_CUSTOMER)) {
+                statement.setInt(1, customer.getId());
+                statement.setString(3, customer.getFirstName());
+                statement.setString(4, customer.getLastName());
+                statement.setString(5, customer.getPhoneNumber());
+                statement.setString(6, customer.getAddress());
+                statement.setString(8, customer.getCity());
+                statement.setString(10, customer.getPostalCode());
+                EmployeeRepository employees = new EmployeeRepository();
+                if (employees.exists(customer.getId())) {
+                    statement.setInt(11, customer.getId());
+                } else {
+                    System.out.println("Couldn't update customer. Invalid employee");
+                    return null;
+                }
+                statement.setDouble(12, customer.getCreditLimit());
+                statement.setInt(13, customer.getId());
+                rows = statement.executeUpdate();
+                if (rows == 1) {
+                    System.out.println("Customer with ID: " + customer.getId() + " is updated");
+                }
+                System.out.println("Rows updated: " + rows);
+            } catch (SQLException e) {
+                System.err.println("ErrorUpdate");
+            }
+        } else {
+            System.out.println("Couldn't update. Customer not found\nRows affected: " + rows);
         }
-        return 0;
+        return rows;
+    }
+
+    public Integer getMaxId() {
+        Integer maxId = 2001;
+        try (Connection connection = JdbcConnection.connect();
+             PreparedStatement statement = connection.prepareStatement(Queries.ID_MAX_C)) {
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                maxId = result.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("ErrorMaxID");
+        }
+        return maxId;
     }
 }
 

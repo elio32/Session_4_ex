@@ -10,12 +10,13 @@ public class CustomersMapper extends Mapper<Customers>{
     public Customers map(ResultSet result) throws SQLException {
         Customers customers = new Customers();
         customers.setId(result.getInt("customerNumber"));
-        customers.setFirstName(result.getString("firstName"));
-        customers.setLastName(result.getString("lastName"));
-        customers.setPhoneNumber(result.getString("phoneNumber"));
-        customers.setAddress(result.getString("address"));
+        customers.setFirstName(result.getString("customerName"));
+        customers.setLastName(result.getString("contactLastName"));
+        customers.setPhoneNumber(result.getString("phone"));
+        customers.setAddress(result.getString("addressLine1"));
         customers.setCity(result.getString("city"));
         customers.setPostalCode(result.getString("postalCode"));
+        customers.setCreditLimit(result.getDouble("creditLimit"));
         return customers;
     }
 }

@@ -12,8 +12,8 @@ public class OfficesMapper extends Mapper<Offices> {
         Offices offices = new Offices();
         offices.setOfficeCode(result.getString("officeCode"));
         offices.setCity(result.getString("city"));
-        offices.setPhoneNumber(result.getString("phoneNumber"));
-        offices.setAddress(result.getString("address"));
+        offices.setPhoneNumber(result.getString("phone"));
+        offices.setAddress(result.getString("addressLine1"));
         offices.setPostalCode(result.getString("postalCode"));
         return offices;
     }
